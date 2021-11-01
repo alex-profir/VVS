@@ -1,7 +1,6 @@
 import express from "express";
-import path from "path";
+import NotFoundMiddleware from "./middlewares/404.middleware";
 
-const PORT = 8080;
 const app = express();
 
 let maintananceMode = false;
@@ -17,27 +16,16 @@ app.get("/maintanance", (req, res) => {
     maintananceMode = !maintananceMode;
     res.send(`Maintanance changed to ${maintananceMode}`);
 })
+app.get("/welcome", (req, res) => {
+    res.render("Welcome");
+})
 app.use(express.static("build"));
 app.use(express.static("public"));
 
-app.use((req, res, next) => {
-    res.status(404);
-    res.format({
-        html: function () {
-            res.render('404', { url: req.url })
-        },
-        json: function () {
-            res.json({ error: 'Not found' })
-        },
-        default: function () {
-            res.type('txt').send('Not found')
-        }
-    })
-});
+app.use(NotFoundMiddleware);
 // app.use('*', (req, res) => {
 //     res.sendFile(path.join(__dirname + "/pages/404.html"));
 // });
 
-app.listen(PORT, () => {
-    console.log(`App running on port: ${8080}`);
-});
+
+export default app;
