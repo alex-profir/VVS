@@ -1,0 +1,21 @@
+html,
+body {
+    display: grid;
+    height: 100%;
+    place-items: center;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+p.status {
+    font-weight: bold;
+    font-size: 40px;
+}
+
+.details {
+    font-size: 30px;
+}
