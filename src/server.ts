@@ -1,6 +1,6 @@
 import express from "express";
 import NotFoundMiddleware from "./middlewares/404.middleware";
-
+import fs from "fs";
 const app = express();
 
 let maintananceMode = false;
@@ -17,15 +17,29 @@ app.get("/maintanance", (req, res) => {
     res.send(`Maintanance changed to ${maintananceMode}`);
 })
 app.get("/welcome", (req, res) => {
-    res.render("Welcome");
+    const files = fs.readdirSync("build", { encoding: "utf8" })
+    console.log({ files });
+    res.render("Welcome", {
+        data: files,
+        relPath: "/build/",
+    });
 })
-app.use(express.static("build"));
+app.use("/build", express.static("build"));
 app.use(express.static("public"));
+app.get("*", (req, res, next) => {
+    try {
 
+        const files = fs.readdirSync(req.url.substr(1), { encoding: "utf8" })
+        res.render("Welcome", {
+            data: files,
+            relPath: req.url,
+        });
+    } catch (e) {
+        next();
+    }
+})
 app.use(NotFoundMiddleware);
-// app.use('*', (req, res) => {
-//     res.sendFile(path.join(__dirname + "/pages/404.html"));
-// });
+
 
 
 export default app;
