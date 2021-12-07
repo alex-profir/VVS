@@ -3,7 +3,7 @@ import NotFoundMiddleware from "./middlewares/404.middleware";
 import fs from "fs";
 const app = express();
 
-let maintananceMode = false;
+let maintananceMode = false
 app.set('view engine', 'ejs');
 app.use((req, res, next) => {
     if (maintananceMode) {
