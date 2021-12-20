@@ -7,24 +7,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="/404.css">
     <link rel="stylesheet" type="text/css" href="/welcome.css">
-    <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+    <!-- <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet"> -->
     <title>Document</title>
 </head>
 
 <body>
 
     <div class="container">
-        <div class="links">
-            <% for( let index=0; index < data.length; index++ ) { %>
-                <a href="<%= relPath %><%= data[index] %>">
-                    <%= data[index] %>
-                </a>
-                <% } %>
-        </div>
-        <i class="icon-camera-retro"></i> 
-        <p class="status">
-            Welcome , nice to have you here
-        </p>
+        <% if (relPath !=="/" ) { %>
+            <a href="<%= (() => {
+        const words = relPath.split(String.fromCharCode(47)).filter(el=> el !== " ")
+                const path = relPath.match(/^\/\w+/)[0];
+                if(words.length === 1)
+                {
+                return " /welcome ";
+                }
+                return relPath.match(/^\/\w+/)[0];
+                })() %>">
+                Go back
+            </a>
+            <% } %>
+                <div class="links">
+                    <% for( let index=0; index < data.length; index++ ) { %>
+                        <div class="link-container">
+                            <% if (data[index].isDir) { %>
+                                <i class="far fa-folder"></i>
+                                <% } %>
+
+
+                                    <% if (data[index].isImage) { %>
+                                        <i class="far fa-file-image"></i>
+                                        <% } %>
+                                            <% if (data[index].isFile && !data[index].isImage) { %>
+                                                <i class="far fa-file"></i>
+                                                <% } %>
+                                                    <a href="<%= relPath %><%= data[index].name %>">
+                                                        <%= data[index].name %>
+                                                    </a>
+                                                    <% } %>
+                        </div>
+                </div>
+                <!-- <i class="far fa-file-word"></i>
+        <i class="icon-camera-retro"></i> -->
+                <p class="status">
+                    Welcome , nice to have you here
+                </p>
     </div>
 </body>
 

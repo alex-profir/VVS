@@ -1,10 +1,24 @@
 import express from "express";
 import NotFoundMiddleware from "./middlewares/404.middleware";
-import fs from "fs";
+import { getFilesFromFileName } from "./utils";
+import cors from "cors";
 const app = express();
 
 let maintananceMode = false
 app.set('view engine', 'ejs');
+app.use(cors({
+    origin: "*"
+}))
+
+app.get("/maintanance-state", (req, res) => {
+    res.send({
+        maintananceMode
+    });
+})
+app.get("/maintanance", (req, res) => {
+    maintananceMode = !maintananceMode;
+    res.send(`Maintanance changed to ${maintananceMode}`);
+})
 app.use((req, res, next) => {
     if (maintananceMode) {
         res.send("Maintanance")
@@ -12,14 +26,9 @@ app.use((req, res, next) => {
         next();
     }
 });
-app.get("/maintanance", (req, res) => {
-    maintananceMode = !maintananceMode;
-    res.send(`Maintanance changed to ${maintananceMode}`);
-})
 const buildFile = "build"; // this should be used to indicate the file locations.
 app.get("/welcome", (req, res) => {
-    const files = fs.readdirSync(buildFile, { encoding: "utf8" })
-    console.log({ files });
+    const files = getFilesFromFileName(buildFile);
     res.render("Welcome", {
         data: files,
         relPath: "/",
@@ -29,10 +38,10 @@ app.use(express.static(buildFile));
 app.use(express.static("public"));
 app.get("*", (req, res, next) => {
     try {
-        const fileRequest = `${buildFile}/${req.url.substr(1)}`;
-        const files = fs.readdirSync(fileRequest, { encoding: "utf8" });
+        const fileRequest = `${buildFile}/${req.url.substring(1)}`;
+        const fileNames = getFilesFromFileName(fileRequest);
         res.render("Welcome", {
-            data: files,
+            data: fileNames,
             relPath: req.url,
         });
     } catch (e) {
