@@ -1,4 +1,4 @@
-import express from "express";
+import express, { response } from "express";
 import NotFoundMiddleware from "./middlewares/404.middleware";
 import { getFilesFromFileName } from "./utils";
 import cors from "cors";
@@ -36,7 +36,7 @@ app.get("/welcome", (req, res) => {
 });
 app.use(express.static(buildFile));
 app.use(express.static("public"));
-app.get("*", (req, res, next) => {
+app.get("/static/*", (req, res, next) => {
     try {
         const fileRequest = `${buildFile}/${req.url.substring(1)}`;
         const fileNames = getFilesFromFileName(fileRequest);
@@ -47,7 +47,10 @@ app.get("*", (req, res, next) => {
     } catch (e) {
         next();
     }
-})
+});
+// app.get("/*", (req, res) => {
+//     res.redirect("/");
+// })
 app.use(NotFoundMiddleware);
 
 

@@ -7,23 +7,22 @@ import cors from "cors";
 const app = express();
 // const command = `${/^win/.test(process.platform) ? 'npm.cmd' : 'npm'} run start:node`.split(" ");
 const command = `node dist/index.js`.split(" ");
-function CommandProcess() {
-    let child: ChildProcess | null = null as any;
-    let runningPort: number = null as any;
-    function isRunning() {
-        console.log({ child });
-        if (child === null) {
+class CommandProcess {
+
+    child: ChildProcess | null = null as any;
+    constructor() {
+    }
+    runningPort: number = null as any;
+    isRunning() {
+        if (this.child === null) {
             return false;
         }
-        return !child?.killed;
+        return !this.child?.killed;
     }
-    function getPort() {
-        return runningPort;
-    }
-    function start(port: number) {
-        if (!child || child.killed) {
-            runningPort = port;
-            child = spawn(command[0], [...command.slice(1), "-p", port as any], {
+    start(port: number) {
+        if (!this.child || this.child.killed) {
+            this.runningPort = port;
+            this.child = spawn(command[0], [...command.slice(1), "-p", port as any], {
                 // env: process.env,
                 stdio: "inherit"
                 // cwd: "../"
@@ -32,29 +31,20 @@ function CommandProcess() {
             console.log("Tryed to start while running ....");
         }
     }
-    function stop() {
-        console.log({ child });
-        if (child && !child.killed) {
-            child.kill("SIGINT");
-            runningPort = null!;
+    stop() {
+        if (this.child && !this.child.killed) {
+            this.child.kill("SIGINT");
+            this.runningPort = null!;
             return true;
         } else {
             console.log("Process does not exist");
             return false;
+
         }
     }
-
-    return {
-        child,
-        start,
-        stop,
-        isRunning,
-        runningPort,
-        getPort
-    }
 }
-let prc = CommandProcess();
-app.locals.prc = prc;
+
+app.locals.prc = new CommandProcess();
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json());
 app.use(cors({
@@ -66,7 +56,6 @@ app.get("/dashboard", (req, res) => {
     // console.log({
     //     isRunning: app.locals.prc.isRunning()
     // })
-    console.log(app.locals.prc);
     res.render("Dashboard", {
         port: 8080,
         isRunning: app.locals.prc.isRunning()
@@ -75,9 +64,7 @@ app.get("/dashboard", (req, res) => {
     });
 });
 app.get("/status", (req, res) => {
-
-    console.log(app.locals);
-    const port = app.locals.prc.getPort();
+    const port = app.locals.prc.runningPort;
     res.send({
         hostUrl: port ? `http://localhost:${port}` : null,
         port,

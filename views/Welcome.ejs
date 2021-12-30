@@ -17,13 +17,13 @@
     <div class="container">
         <% if (relPath !=="/" ) { %>
             <a href="<%= (() => {
-        const words = relPath.split(String.fromCharCode(47)).filter(el=> el !== " ")
+                const words = relPath.split(String.fromCharCode(47)).filter(el=> el !== "")
                 const path = relPath.match(/^\/\w+/)[0];
                 if(words.length === 1)
                 {
-                return " /welcome ";
+                    return "/welcome";
                 }
-                return relPath.match(/^\/\w+/)[0];
+                    return relPath.match(/^\/\w+/)[0];
                 })() %>">
                 Go back
             </a>
