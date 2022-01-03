@@ -54,6 +54,7 @@ describe("Login Functionality", () => {
         //     await button.click();
         // }
     });
+    
     test("Login successfully", async () => {
         // good password
         await page.type("#email", "alex_profir@yahoo.com");

@@ -86,7 +86,7 @@ describe("Basic functionality", () => {
 
         const resourceRequest = request(app)
             .get("/welcome")
-            .expect(200);
+            .expect(503);
         const message = await resourceRequest;
         expect(message.text).toBe("Maintanance"); // we are in 
         // maintanance mode , so this should be the a string

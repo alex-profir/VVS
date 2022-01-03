@@ -17,11 +17,12 @@ app.get("/maintanance-state", (req, res) => {
 })
 app.get("/maintanance", (req, res) => {
     maintananceMode = !maintananceMode;
+
     res.send(`Maintanance changed to ${maintananceMode}`);
 })
 app.use((req, res, next) => {
     if (maintananceMode) {
-        res.send("Maintanance")
+        res.status(503).send("Maintanance")
     } else {
         next();
     }
